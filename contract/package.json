@@ -30,5 +30,8 @@
   },
   "scripts": {
     "build": "pkgroll --clean-dist"
+  },
+  "dependencies": {
+    "@congruent-stack/congruent-api": "^0.2.0"
   }
 }
