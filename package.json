@@ -1,0 +1,15 @@
+{
+  "name": "@congruent-stack/example-monorepo",
+  "version": "0.1.0",
+  "description": "Monorepo example using congruent-api",
+  "keywords": [],
+  "author": "congruent-stack",
+  "license": "MIT",
+  "packageManager": "pnpm@10.15.1",
+  "files": [],
+  "dependencies": {
+  },
+  "devDependencies": {
+    "vitest": "catalog:"
+  }
+}
