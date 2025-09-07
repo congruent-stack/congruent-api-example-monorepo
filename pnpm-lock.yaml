@@ -26,6 +26,12 @@ importers:
 
   app-react:
     dependencies:
+      '@congruent-stack/congruent-api':
+        specifier: ^0.3.3
+        version: 0.3.3
+      '@congruent-stack/congruent-api-fetch':
+        specifier: ^0.3.3
+        version: 0.3.3(@congruent-stack/congruent-api@0.3.3)
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -70,8 +76,8 @@ importers:
   contract:
     dependencies:
       '@congruent-stack/congruent-api':
-        specifier: ^0.2.0
-        version: 0.2.0
+        specifier: ^0.3.3
+        version: 0.3.3
     devDependencies:
       pkgroll:
         specifier: 'catalog:'
@@ -165,8 +171,13 @@ packages:
     resolution: {integrity: sha512-bkFqkLhh3pMBUQQkpVgWDWq/lqzc2678eUyDlTBhRqhCHFguYYGM0Efga7tYk4TogG/3x0EEl66/OQ+WGbWB/Q==}
     engines: {node: '>=6.9.0'}
 
-  '@congruent-stack/congruent-api@0.2.0':
-    resolution: {integrity: sha512-9x6OCjG49HWiipvVj0RXuoj5Fz0I3KolB7dXkL4/JKrfIW37YNkqQ0csX2T0h7YoR/s+Txzno6S0XvfGQr55EQ==}
+  '@congruent-stack/congruent-api-fetch@0.3.3':
+    resolution: {integrity: sha512-x7nhQXSWp3jTapXNk+czOvEl/RV1Itkt6YtJTCT5MZ8Won+RU0uVZvIEOXMWPTpv5ySRYRHvLKJnxbSqnRicxg==}
+    peerDependencies:
+      '@congruent-stack/congruent-api': 0.3.3
+
+  '@congruent-stack/congruent-api@0.3.3':
+    resolution: {integrity: sha512-yy2qoeU3VCxW7eGujtNwcyRiHkJm2ZzL0rJQgyE5CT9uRq9Tf5ZuXa0Tw+rFn4DJ1MDdn+kp6vBbj8d0NT1fmA==}
 
   '@esbuild/aix-ppc64@0.25.9':
     resolution: {integrity: sha512-OaGtL73Jck6pBKjNIe24BnFE6agGl+6KxDtTfHhy1HmhthfKouEcOhqpSL64K4/0WCtbKFLOdzD/44cJ4k9opA==}
@@ -1533,7 +1544,11 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
 
-  '@congruent-stack/congruent-api@0.2.0': {}
+  '@congruent-stack/congruent-api-fetch@0.3.3(@congruent-stack/congruent-api@0.3.3)':
+    dependencies:
+      '@congruent-stack/congruent-api': 0.3.3
+
+  '@congruent-stack/congruent-api@0.3.3': {}
 
   '@esbuild/aix-ppc64@0.25.9':
     optional: true
