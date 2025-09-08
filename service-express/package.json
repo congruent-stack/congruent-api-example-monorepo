@@ -1,0 +1,27 @@
+{
+  "name": "@congruent-stack/example-monorepo-service-express",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Monorepo example using congruent-api",
+  "keywords": [],
+  "author": "congruent-stack",
+  "license": "MIT",
+  "packageManager": "pnpm@10.15.1",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "npx tsc --noEmit && npx tsx --inspect=10000 --watch src/index.ts"
+  },
+  "dependencies": {
+    "@congruent-stack/example-monorepo-contract": "workspace:*",
+    "body-parser": "catalog:",
+    "cors": "catalog:",
+    "express": "catalog:"
+  },
+  "devDependencies": {
+    "@types/body-parser": "catalog:",
+    "@types/cors": "catalog:",
+    "@types/express": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
+  }
+}

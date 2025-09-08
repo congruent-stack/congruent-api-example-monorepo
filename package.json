@@ -11,5 +11,9 @@
   },
   "devDependencies": {
     "vitest": "catalog:"
+  },
+  "scripts": {
+    "app:dev": "pnpm --filter @congruent-stack/example-monorepo-app-react dev",
+    "svc:dev": "pnpm --filter @congruent-stack/example-monorepo-service-express dev"
   }
 }
