@@ -3,7 +3,12 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
-import { getHelloWorldMessageFetch } from '@congruent-stack/congruent-api-fetch';
+import { pokedexApiContract } from '@congruent-stack/example-monorepo-contract';
+import { createFetchClient } from '@congruent-stack/congruent-api-fetch';
+
+const pokedexApi = createFetchClient(pokedexApiContract, {
+  baseUrl: 'http://localhost:3000'
+});
 
 function App() {
   const [count, setCount] = useState(0)
@@ -18,9 +23,17 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>{getHelloWorldMessageFetch('Vite + React')}</h1>
+      <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+        <button onClick={async () => {
+          const pokemon = await pokedexApi.pokemons.id(count).GET({
+            headers: {
+              'x-tenant-id': 'my-tenant-id'
+            }
+          });
+          console.log('Fetched pokemon:', pokemon);
+          setCount((count) => count + 1);
+        }}>
           count is {count}
         </button>
         <p>

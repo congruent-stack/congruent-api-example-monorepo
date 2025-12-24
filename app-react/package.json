@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@congruent-stack/congruent-api": "^0.3.3",
-    "@congruent-stack/congruent-api-fetch": "^0.3.3",
+    "@congruent-stack/congruent-api-fetch": "catalog:",
+    "@congruent-stack/example-monorepo-contract": "workspace:*",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

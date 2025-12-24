@@ -1,5 +1,6 @@
 {
   "name": "@congruent-stack/example-monorepo-contract",
+  "type": "module",
   "version": "0.1.0",
   "description": "Monorepo example using congruent-api",
   "keywords": [],
@@ -25,6 +26,7 @@
     }
   },
   "devDependencies": {
+    "@types/express": "catalog:",
     "pkgroll": "catalog:",
     "typescript": "catalog:"
   },
@@ -32,6 +34,10 @@
     "build": "pkgroll --clean-dist"
   },
   "dependencies": {
-    "@congruent-stack/congruent-api": "^0.3.3"
+    "@congruent-stack/congruent-api": "catalog:",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "@types/express": "catalog:"
   }
 }
