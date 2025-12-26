@@ -4,21 +4,25 @@ import { apiContract, endpoint, response, HttpStatusCode as s } from "@congruent
 export * from '@congruent-stack/congruent-api';
 
 export const CommonHeadersSchema = z.object({
-  'x-tenant-id': z.string(),
+  "x-my-secret-header": z.string()
 });
 
 export const BaseRequestBodySchema = z.object({
-  tenantId: z.string(),
+  //someCommonProp: z.string(),
 });
+
+export const PokemonTypeSchema = z.union([
+  z.literal('fire'),
+  z.literal('water'),
+  z.literal('grass'),
+]);
+
+export type PokemonType = z.output<typeof PokemonTypeSchema>;
 
 export const PokemonSchema = BaseRequestBodySchema.extend({
   id: z.number().int().min(1),
   name: z.string(),
-  type: z.union([
-    z.literal('fire'),
-    z.literal('water'),
-    z.literal('grass'),
-  ]),
+  type: PokemonTypeSchema,
   description: z.string().optional(),
 });
 
