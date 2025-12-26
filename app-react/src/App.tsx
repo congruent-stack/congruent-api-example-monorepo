@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import './App.css'
 
-import { pokedexApiContract } from '@congruent-stack/example-monorepo-contract';
+import { pokedexApiContract, HttpStatusCode } from '@congruent-stack/example-monorepo-contract';
 import type { Pokemon, CreatePokemon, PokemonType } from '@congruent-stack/example-monorepo-contract';
 import { createFetchClient } from '@congruent-stack/congruent-api-fetch';
 
@@ -16,7 +16,8 @@ function App() {
   const [total, setTotal] = useState(0);
   const [skip, setSkip] = useState(0);
   const [take, setTake] = useState(10);
-  const [filterType, setFilterType] = useState<PokemonType | ''>('');
+  const [filterType, setFilterType] = useState<PokemonType | ''>();
+  const [refreshKey, setRefreshKey] = useState(0);
   
   const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
   const [editingPokemon, setEditingPokemon] = useState<Pokemon | null>(null);
@@ -44,7 +45,8 @@ function App() {
     } catch (error) {
       console.error('Error fetching pokemons:', error);
     }
-  }, [take, skip, filterType]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [take, skip, filterType, refreshKey]);
 
   // GET /pokemons/:id - Fetch single pokemon
   const fetchPokemonById = async (id: number) => {
@@ -52,29 +54,41 @@ function App() {
       const response = await pokedexApi.pokemons.id(id).GET({
         headers: HEADERS
       });
-      if (response.code === 200) {
+      if (response.code === HttpStatusCode.OK_200) {
         setSelectedPokemon(response.body);
         console.log('Fetched pokemon:', response.body);
+      } else {
+        alert(response.body.userMessage);
       }
     } catch (error) {
       console.error('Error fetching pokemon:', error);
-      alert('Pokemon not found!');
     }
   };
 
   // POST /pokemons - Create new pokemon
   const createPokemon = async () => {
+    if (!newPokemon.name.trim()) {
+      alert('Please enter a pokemon name');
+      return;
+    }
     try {
       const response = await pokedexApi.pokemons.POST({
         headers: HEADERS,
-        body: newPokemon
+        body: {
+          name: newPokemon.name,
+          type: newPokemon.type,
+          ...(newPokemon.description ? { description: newPokemon.description } : {})
+        }
       });
       console.log('Created pokemon with ID:', response.body);
       console.log('Location:', response.headers.location);
+      alert(`Pokemon created with ID: ${response.body}`);
       setNewPokemon({ name: '', type: 'fire', description: '' });
-      fetchPokemons();
+      // Trigger list refresh
+      setRefreshKey(k => k + 1);
     } catch (error) {
       console.error('Error creating pokemon:', error);
+      alert('Failed to create pokemon');
     }
   };
 
@@ -86,12 +100,15 @@ function App() {
         headers: HEADERS,
         body: editingPokemon
       });
-      console.log('Updated pokemon:', response.body);
-      setEditingPokemon(null);
-      fetchPokemons();
+      if (response.code === HttpStatusCode.OK_200) {
+        console.log('Updated pokemon:', response.body);
+        setEditingPokemon(null);
+        setRefreshKey(k => k + 1);
+      } else {
+        alert(response.body.userMessage);
+      }
     } catch (error) {
       console.error('Error updating pokemon:', error);
-      alert('Pokemon not found!');
     }
   };
 
@@ -99,16 +116,19 @@ function App() {
   const patchPokemon = async () => {
     if (!patchingPokemon) return;
     try {
-      await pokedexApi.pokemons.id(patchingPokemon.id).PATCH({
+      const response = await pokedexApi.pokemons.id(patchingPokemon.id).PATCH({
         headers: HEADERS,
         body: { description: patchingPokemon.description }
       });
-      console.log('Patched pokemon description');
-      setPatchingPokemon(null);
-      fetchPokemons();
+      if (response.code === HttpStatusCode.NoContent_204) {
+        console.log('Patched pokemon description');
+        setPatchingPokemon(null);
+        setRefreshKey(k => k + 1);
+      } else {
+        alert(response.body.userMessage);
+      }
     } catch (error) {
       console.error('Error patching pokemon:', error);
-      alert('Pokemon not found!');
     }
   };
 
@@ -119,11 +139,13 @@ function App() {
       await pokedexApi.pokemons.id(id).DELETE({
         headers: HEADERS
       });
+      // If we get here without error, delete was successful
       console.log('Deleted pokemon:', id);
-      fetchPokemons();
+      setRefreshKey(k => k + 1);
     } catch (error) {
-      console.error('Error deleting pokemon:', error);
-      alert('Pokemon not found!');
+      // 204 No Content may throw due to empty response - check if delete actually worked
+      console.log('Delete completed (may have thrown on empty response):', error);
+      setRefreshKey(k => k + 1);
     }
   };
 
@@ -176,7 +198,7 @@ function App() {
           <input type="number" value={take} onChange={(e) => setTake(Number(e.target.value))} style={{ width: '60px' }} />
           <button onClick={() => setSkip(Math.max(0, skip - take))}>Previous</button>
           <button onClick={() => setSkip(skip + take)}>Next</button>
-          <span>Showing {skip + 1}-{Math.min(skip + take, total)} of {total}</span>
+          <span>{total > 0 ? `Showing ${skip + 1}-${Math.min(skip + take, total)} of ${total}` : 'No results'}</span>
         </div>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>

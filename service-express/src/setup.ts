@@ -11,7 +11,7 @@ import { PokemonService } from "./pokemon_svc.js";
 // service registration
 export const container = new DIContainer()
   .register('LoggerSvc', () => new LoggerService(), 'singleton')
-  .register('PokemonSvc', (scope) => new PokemonService(scope.getLoggerSvc()), 'transient')
+  .register('PokemonSvc', (scope) => new PokemonService(scope.getLoggerSvc()), 'singleton')
 
 // express pipeline setup
 export const app = express()
