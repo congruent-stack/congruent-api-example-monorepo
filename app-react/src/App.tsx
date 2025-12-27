@@ -11,6 +11,28 @@ const pokedexApi = createFetchClient(pokedexApiContract, {
 
 const HEADERS = { 'x-my-secret-header': 'my-secret-value' };
 
+// // Utility wrapper for API calls
+// type ApiResponse<T> = { success: true; data: T } | { success: false; error: string };
+// type InferBody<T> = T extends { body: infer B } ? B : undefined;
+
+// async function apiCall<T extends { code: HttpStatusCode; body?: unknown }>(
+//   call: () => Promise<T>,
+//   successCodes: HttpStatusCode[] = [HttpStatusCode.OK_200]
+// ): Promise<ApiResponse<InferBody<T>>> {
+//   try {
+//     const response = await call();
+//     if (successCodes.includes(response.code)) {
+//       return { success: true, data: response.body as InferBody<T> };
+//     }
+//     // Handle error responses with userMessage
+//     const errorBody = response.body as { userMessage?: string };
+//     return { success: false, error: errorBody?.userMessage ?? 'Request failed' };
+//   } catch (error) {
+//     console.error('API error:', error);
+//     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+//   }
+// }
+
 function App() {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [total, setTotal] = useState(0);
@@ -29,123 +51,99 @@ function App() {
     description: ''
   });
 
-  // GET /pokemons - Fetch list of pokemons
+  const refresh = () => setRefreshKey(k => k + 1);
+
+  // Fetch list of pokemons
   const fetchPokemons = useCallback(async () => {
-    try {
-      const response = await pokedexApi.pokemons.GET({
-        headers: HEADERS,
-        query: {
-          take,
-          skip,
-          ...(filterType && { type: filterType as PokemonType })
-        }
-      });
-      setPokemons(response.body.list);
-      setTotal(response.body.total);
-    } catch (error) {
-      console.error('Error fetching pokemons:', error);
+    console.log("refreshKey =", refreshKey);
+    const response = await pokedexApi.pokemons.GET({
+      headers: HEADERS,
+      query: {
+        take,
+        skip,
+        ...(filterType && { type: filterType as PokemonType })
+      }
+    });
+    if (response.code !== HttpStatusCode.OK_200) {
+      alert('Error fetching pokemons');
+      return;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setPokemons(response.body.list);
+    setTotal(response.body.total);
   }, [take, skip, filterType, refreshKey]);
 
-  // GET /pokemons/:id - Fetch single pokemon
+  // Fetch single pokemon
   const fetchPokemonById = async (id: number) => {
-    try {
-      const response = await pokedexApi.pokemons.id(id).GET({
-        headers: HEADERS
-      });
-      if (response.code === HttpStatusCode.OK_200) {
-        setSelectedPokemon(response.body);
-        console.log('Fetched pokemon:', response.body);
-      } else {
-        alert(response.body.userMessage);
-      }
-    } catch (error) {
-      console.error('Error fetching pokemon:', error);
+    const response = await pokedexApi.pokemons.id(id).GET({ headers: HEADERS });
+    if (response.code === HttpStatusCode.OK_200) {
+      setSelectedPokemon(response.body);
+    } else if (response.code === HttpStatusCode.NotFound_404) {
+      alert(`Pokemon with ID ${id} not found`);
+    } else {
+      alert('Error fetching pokemon');
     }
   };
 
-  // POST /pokemons - Create new pokemon
+  // Create new pokemon
   const createPokemon = async () => {
     if (!newPokemon.name.trim()) {
       alert('Please enter a pokemon name');
       return;
     }
-    try {
-      const response = await pokedexApi.pokemons.POST({
-        headers: HEADERS,
-        body: {
-          name: newPokemon.name,
-          type: newPokemon.type,
-          ...(newPokemon.description ? { description: newPokemon.description } : {})
-        }
-      });
-      console.log('Created pokemon with ID:', response.body);
-      console.log('Location:', response.headers.location);
+    const response = await pokedexApi.pokemons.POST({
+      headers: HEADERS,
+      body: {
+        name: newPokemon.name,
+        type: newPokemon.type,
+        ...(newPokemon.description ? { description: newPokemon.description } : {})
+      }
+    });
+    if (response.code === HttpStatusCode.Created_201) {
       alert(`Pokemon created with ID: ${response.body}`);
       setNewPokemon({ name: '', type: 'fire', description: '' });
-      // Trigger list refresh
-      setRefreshKey(k => k + 1);
-    } catch (error) {
-      console.error('Error creating pokemon:', error);
-      alert('Failed to create pokemon');
+      refresh();
+    } else {
+      alert('Error creating pokemon');
     }
   };
 
-  // PUT /pokemons/:id - Full update
+  // Full update
   const updatePokemon = async () => {
-    if (!editingPokemon) return;
-    try {
-      const response = await pokedexApi.pokemons.id(editingPokemon.id).PUT({
-        headers: HEADERS,
-        body: editingPokemon
-      });
-      if (response.code === HttpStatusCode.OK_200) {
-        console.log('Updated pokemon:', response.body);
-        setEditingPokemon(null);
-        setRefreshKey(k => k + 1);
-      } else {
-        alert(response.body.userMessage);
-      }
-    } catch (error) {
-      console.error('Error updating pokemon:', error);
+    const response = await pokedexApi.pokemons.id(editingPokemon!.id).PUT({
+      headers: HEADERS,
+      body: editingPokemon!
+    });
+    if (response.code === HttpStatusCode.OK_200) {
+      setEditingPokemon(null);
+      refresh();
+    } else {
+      alert('Error updating pokemon');
     }
   };
 
-  // PATCH /pokemons/:id - Partial update
+  // Partial update
   const patchPokemon = async () => {
     if (!patchingPokemon) return;
-    try {
-      const response = await pokedexApi.pokemons.id(patchingPokemon.id).PATCH({
-        headers: HEADERS,
-        body: { description: patchingPokemon.description }
-      });
-      if (response.code === HttpStatusCode.NoContent_204) {
-        console.log('Patched pokemon description');
-        setPatchingPokemon(null);
-        setRefreshKey(k => k + 1);
-      } else {
-        alert(response.body.userMessage);
-      }
-    } catch (error) {
-      console.error('Error patching pokemon:', error);
+    const response = await pokedexApi.pokemons.id(patchingPokemon.id).PATCH({
+      headers: HEADERS,
+      body: { description: patchingPokemon.description }
+    });
+    if (response.code === HttpStatusCode.NoContent_204) {
+      setPatchingPokemon(null);
+      refresh();
+    } else {
+      alert('Error patching pokemon');
     }
   };
 
-  // DELETE /pokemons/:id - Delete pokemon
+  // Delete pokemon
   const deletePokemon = async (id: number) => {
     if (!confirm(`Delete pokemon #${id}?`)) return;
-    try {
-      await pokedexApi.pokemons.id(id).DELETE({
-        headers: HEADERS
-      });
-      // If we get here without error, delete was successful
-      console.log('Deleted pokemon:', id);
-      setRefreshKey(k => k + 1);
-    } catch (error) {
-      // 204 No Content may throw due to empty response - check if delete actually worked
-      console.log('Delete completed (may have thrown on empty response):', error);
-      setRefreshKey(k => k + 1);
+    const response = await pokedexApi.pokemons.id(id).DELETE({ headers: HEADERS });
+    if (response.code === HttpStatusCode.NoContent_204) {
+      refresh();
+    } else {
+      alert('Error deleting pokemon');
     }
   };
 
@@ -202,7 +200,7 @@ function App() {
         </div>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: '#f0f0f0' }}>
+            <tr style={{ background: '#060912ff' }}>
               <th style={{ padding: '8px', border: '1px solid #ddd' }}>ID</th>
               <th style={{ padding: '8px', border: '1px solid #ddd' }}>Name</th>
               <th style={{ padding: '8px', border: '1px solid #ddd' }}>Type</th>
