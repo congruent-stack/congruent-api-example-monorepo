@@ -9,29 +9,7 @@ const pokedexApi = createFetchClient(pokedexApiContract, {
   baseUrl: 'http://localhost:3000'
 });
 
-const HEADERS = { 'x-my-secret-header': 'my-secret-value' };
-
-// // Utility wrapper for API calls
-// type ApiResponse<T> = { success: true; data: T } | { success: false; error: string };
-// type InferBody<T> = T extends { body: infer B } ? B : undefined;
-
-// async function apiCall<T extends { code: HttpStatusCode; body?: unknown }>(
-//   call: () => Promise<T>,
-//   successCodes: HttpStatusCode[] = [HttpStatusCode.OK_200]
-// ): Promise<ApiResponse<InferBody<T>>> {
-//   try {
-//     const response = await call();
-//     if (successCodes.includes(response.code)) {
-//       return { success: true, data: response.body as InferBody<T> };
-//     }
-//     // Handle error responses with userMessage
-//     const errorBody = response.body as { userMessage?: string };
-//     return { success: false, error: errorBody?.userMessage ?? 'Request failed' };
-//   } catch (error) {
-//     console.error('API error:', error);
-//     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
-//   }
-// }
+const HEADERS = { 'x-my-secret-header': 'my-secret-editor' };
 
 function App() {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);

@@ -1,5 +1,5 @@
 import z from "zod";
-import { apiContract, endpoint, response, HttpStatusCode as s } from "@congruent-stack/congruent-api";
+import { apiContract, endpoint, IDecoratorHandlerSchemas, response, HttpStatusCode as s } from "@congruent-stack/congruent-api";
 
 export * from '@congruent-stack/congruent-api';
 
@@ -9,6 +9,10 @@ export const CommonHeadersSchema = z.object({
 
 export const BaseRequestBodySchema = z.object({
   //someCommonProp: z.string(),
+});
+
+export const UnauthorizedResponseBodySchema = z.object({
+  userMessage: z.string(),
 });
 
 export const PokemonTypeSchema = z.union([
@@ -36,6 +40,19 @@ export const NotFoundSchema = z.object({
   userMessage: z.string(),
 });
 
+export const ForbiddenResponseBodySchema = z.object({
+  userMessage: z.string(),
+});
+
+export class RoleCheckDecoratorSchemas implements IDecoratorHandlerSchemas {
+  headers = CommonHeadersSchema;
+  responses = {
+    [s.Forbidden_403]: response({
+      body: ForbiddenResponseBodySchema,
+    }),
+  };
+}
+
 export const pokedexApiContract = apiContract({
   pokemons: {
     GET: endpoint({
@@ -52,6 +69,7 @@ export const pokedexApiContract = apiContract({
         type: PokemonSchema.shape.type.optional(),
       }),
       responses: {
+        [s.Unauthorized_401]: response({ body: UnauthorizedResponseBodySchema }),
         [s.OK_200]: response({
           body: z.object({
             list: z.array(PokemonSchema),
@@ -64,6 +82,8 @@ export const pokedexApiContract = apiContract({
       headers: CommonHeadersSchema,
       body: CreatePokemonSchema,
       responses: {
+        [s.Unauthorized_401]: response({ body: UnauthorizedResponseBodySchema }),
+        [s.Forbidden_403]: response({ body: ForbiddenResponseBodySchema }),
         [s.Created_201]: response({ 
           headers: z.object({
             location: z.url().describe("URL of the created resource")
@@ -76,6 +96,7 @@ export const pokedexApiContract = apiContract({
       GET: endpoint({
         headers: CommonHeadersSchema,
         responses: {
+          [s.Unauthorized_401]: response({ body: UnauthorizedResponseBodySchema }),
           [s.OK_200]: response({ body: PokemonSchema }),
           [s.NotFound_404]: response({ body: NotFoundSchema }),
         },
@@ -83,6 +104,7 @@ export const pokedexApiContract = apiContract({
       DELETE: endpoint({
         headers: CommonHeadersSchema,
         responses: {
+          [s.Unauthorized_401]: response({ body: UnauthorizedResponseBodySchema }),
           [s.NoContent_204]: response({  }),
           [s.NotFound_404]: response({ body: NotFoundSchema }),
         }
@@ -91,6 +113,7 @@ export const pokedexApiContract = apiContract({
         headers: CommonHeadersSchema,
         body: PokemonSchema,
         responses: {
+          [s.Unauthorized_401]: response({ body: UnauthorizedResponseBodySchema }),
           [s.OK_200]: response({ body: PokemonSchema }),
           [s.NotFound_404]: response({ body: NotFoundSchema }),
         }
@@ -99,6 +122,7 @@ export const pokedexApiContract = apiContract({
         headers: CommonHeadersSchema,
         body: PokemonSchema.partial(),
         responses: {
+          [s.Unauthorized_401]: response({ body: UnauthorizedResponseBodySchema }),
           [s.NoContent_204]: response({  }),
           [s.NotFound_404]: response({ body: NotFoundSchema }),
         }

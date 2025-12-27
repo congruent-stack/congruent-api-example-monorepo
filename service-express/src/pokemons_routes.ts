@@ -1,5 +1,33 @@
-import { HttpStatusCode, route } from '@congruent-stack/example-monorepo-contract';
+import { HttpStatusCode, middleware, route, CommonHeadersSchema, BaseRequestBodySchema, response, UnauthorizedResponseBodySchema } from '@congruent-stack/example-monorepo-contract';
 import { reg } from './setup.js';
+import { RoleCheckDecorator } from './role_check_decorator.js';
+
+middleware(reg, '/pokemons')
+  .inject((c) => ({
+    loggerSvc: c.getLoggerSvc()
+  }))
+  .register({
+    headers: CommonHeadersSchema,
+    body: BaseRequestBodySchema.optional(),
+    responses: {
+      [HttpStatusCode.Unauthorized_401]: response({ body: UnauthorizedResponseBodySchema })
+    }
+  }, async (req, ctx) => {
+    if (!req.headers['x-my-secret-header']) {
+      return {
+        code: HttpStatusCode.Unauthorized_401,
+        body: { userMessage: 'Missing http header: x-my-secret-header' }
+      };
+    }
+
+    if (req.headers['x-my-secret-header'].startsWith('my-secret') == false) {
+      return {
+        code: HttpStatusCode.Unauthorized_401,
+        body: { userMessage: 'Invalid http header: x-my-secret-header' }
+      };
+    }
+    await ctx.next();
+  })
 
 // List pokemons with pagination and optional filtering
 route(reg, 'GET /pokemons')
@@ -19,6 +47,7 @@ route(reg, 'GET /pokemons')
 
 // Create a new pokemon
 route(reg, 'POST /pokemons')
+  .decorateWith(RoleCheckDecorator, { roles: ['editor'] })
   .inject((scope) => ({
     pokemonSvc: scope.getPokemonSvc(),
     loggerSvc: scope.getLoggerSvc(),

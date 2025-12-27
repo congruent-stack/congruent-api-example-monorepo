@@ -4,9 +4,9 @@ packages:
   - service-express
 
 catalog:
-  '@congruent-stack/congruent-api': ^0.12.1
-  '@congruent-stack/congruent-api-express': ^0.12.1
-  '@congruent-stack/congruent-api-fetch': ^0.12.1
+  '@congruent-stack/congruent-api': ^0.13.0
+  '@congruent-stack/congruent-api-express': ^0.13.0
+  '@congruent-stack/congruent-api-fetch': ^0.13.0
   '@types/body-parser': 1.19.6
   '@types/cors': 2.8.19
   '@types/express': 5.0.3

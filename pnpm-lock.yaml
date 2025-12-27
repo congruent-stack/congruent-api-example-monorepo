@@ -7,14 +7,14 @@ settings:
 catalogs:
   default:
     '@congruent-stack/congruent-api':
-      specifier: ^0.12.1
-      version: 0.12.1
+      specifier: ^0.13.0
+      version: 0.13.0
     '@congruent-stack/congruent-api-express':
-      specifier: ^0.12.1
-      version: 0.12.1
+      specifier: ^0.13.0
+      version: 0.13.0
     '@congruent-stack/congruent-api-fetch':
-      specifier: ^0.12.1
-      version: 0.12.1
+      specifier: ^0.13.0
+      version: 0.13.0
     '@types/body-parser':
       specifier: 1.19.6
       version: 1.19.6
@@ -61,7 +61,7 @@ importers:
     dependencies:
       '@congruent-stack/congruent-api-fetch':
         specifier: 'catalog:'
-        version: 0.12.1(@congruent-stack/congruent-api@0.12.1(zod@4.1.5))
+        version: 0.13.0(@congruent-stack/congruent-api@0.13.0(zod@4.1.5))
       '@congruent-stack/example-monorepo-contract':
         specifier: workspace:*
         version: link:../contract
@@ -110,7 +110,7 @@ importers:
     dependencies:
       '@congruent-stack/congruent-api':
         specifier: 'catalog:'
-        version: 0.12.1(zod@4.1.5)
+        version: 0.13.0(zod@4.1.5)
       zod:
         specifier: 'catalog:'
         version: 4.1.5
@@ -129,7 +129,7 @@ importers:
     dependencies:
       '@congruent-stack/congruent-api-express':
         specifier: 'catalog:'
-        version: 0.12.1(@congruent-stack/congruent-api@0.12.1(zod@4.1.5))(@types/express@5.0.3)(express@5.1.0)
+        version: 0.13.0(@congruent-stack/congruent-api@0.13.0(zod@4.1.5))(@types/express@5.0.3)(express@5.1.0)
       '@congruent-stack/example-monorepo-contract':
         specifier: workspace:*
         version: link:../contract
@@ -247,20 +247,20 @@ packages:
     resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
 
-  '@congruent-stack/congruent-api-express@0.12.1':
-    resolution: {integrity: sha512-IwYGle+cyHGzmfNdvhDo/pg/agNpA/dzxKq+K8z9E9xe3Ao2EvHsiYeMYsIYB0ZoXJkwxxVw0kbSK4Wv38Ta1w==}
+  '@congruent-stack/congruent-api-express@0.13.0':
+    resolution: {integrity: sha512-To1ldyUxnZ9YCb0Gz/MtXfr5tCWx0fVSMXB7Tbza2dWlc2FQVDZfgqWc8p81/rix4yj3ecaYTDNm8jyxQ3rJGg==}
     peerDependencies:
-      '@congruent-stack/congruent-api': 0.12.1
+      '@congruent-stack/congruent-api': 0.13.0
       '@types/express': 5.0.3
       express: 5.1.0
 
-  '@congruent-stack/congruent-api-fetch@0.12.1':
-    resolution: {integrity: sha512-0j10OI6J7A8eRWKQOJpytxGLe0r7+HORkNBF42jTlW6R5HxxxCqft2DHR4B7oQWwiUUMV9o21Yhdu3CAH865vQ==}
+  '@congruent-stack/congruent-api-fetch@0.13.0':
+    resolution: {integrity: sha512-IenbP8qjAP7FhZHCrOYB3nm3P9+fEeCSDPo79Dx6JLPKin0uhddBKmfLNt8goDinzqFWsz0OoV+cmZuekQ/r8Q==}
     peerDependencies:
-      '@congruent-stack/congruent-api': 0.12.1
+      '@congruent-stack/congruent-api': 0.13.0
 
-  '@congruent-stack/congruent-api@0.12.1':
-    resolution: {integrity: sha512-8sDfimUYHXQbbYoOrt3gt7sE/nGct2pG5Ja42UqjfQkI+2Rfln/fHcngyjq9B/Tvk5bR1/74ehhqGXccb2ox1A==}
+  '@congruent-stack/congruent-api@0.13.0':
+    resolution: {integrity: sha512-q5FzUTnQ+Ut0KLTq3n2FSRPKGMr39KzGdnpdN0WAx8zupIOg1HAendxcQQ/evuT9zyP/Tu+aljOs6CYx3pABsA==}
     peerDependencies:
       zod: ^4.0.10
 
@@ -2089,17 +2089,17 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@congruent-stack/congruent-api-express@0.12.1(@congruent-stack/congruent-api@0.12.1(zod@4.1.5))(@types/express@5.0.3)(express@5.1.0)':
+  '@congruent-stack/congruent-api-express@0.13.0(@congruent-stack/congruent-api@0.13.0(zod@4.1.5))(@types/express@5.0.3)(express@5.1.0)':
     dependencies:
-      '@congruent-stack/congruent-api': 0.12.1(zod@4.1.5)
+      '@congruent-stack/congruent-api': 0.13.0(zod@4.1.5)
       '@types/express': 5.0.3
       express: 5.1.0
 
-  '@congruent-stack/congruent-api-fetch@0.12.1(@congruent-stack/congruent-api@0.12.1(zod@4.1.5))':
+  '@congruent-stack/congruent-api-fetch@0.13.0(@congruent-stack/congruent-api@0.13.0(zod@4.1.5))':
     dependencies:
-      '@congruent-stack/congruent-api': 0.12.1(zod@4.1.5)
+      '@congruent-stack/congruent-api': 0.13.0(zod@4.1.5)
 
-  '@congruent-stack/congruent-api@0.12.1(zod@4.1.5)':
+  '@congruent-stack/congruent-api@0.13.0(zod@4.1.5)':
     dependencies:
       zod: 4.1.5
 
