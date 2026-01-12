@@ -10,8 +10,8 @@ import { PokemonService } from "./pokemon_svc.js";
 
 // service registration
 export const container = new DIContainer()
-  .register('LoggerSvc', () => new LoggerService(), 'singleton')
-  .register('PokemonSvc', (scope) => new PokemonService(scope.getLoggerSvc()), 'singleton')
+  .register('LoggerSvc', () => new LoggerService(), 'scoped')
+  .register('PokemonSvc', (scope) => new PokemonService(scope.getLoggerSvc()), 'scoped') //TODO: don't allow singleton if it has scoped or transient dependencies
 
 // express pipeline setup
 export const app = express()

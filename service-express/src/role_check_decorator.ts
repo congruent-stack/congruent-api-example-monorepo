@@ -12,12 +12,12 @@ export class RoleCheckDecorator implements IEndpointHandlerDecorator<RoleCheckDe
     this.roles = params.roles;
   }
 
-  static create(_diScope: ReturnType<typeof container.createScope>, params: RoleCheckDecoratorParams): RoleCheckDecorator {
+  static create(_scope: ReturnType<typeof container.createScope>, params: RoleCheckDecoratorParams): RoleCheckDecorator {
     return new RoleCheckDecorator(params);
   }
   
-  async handle(input: DecoratorHandlerInput<RoleCheckDecoratorSchemas>, ctx: DecoratorHandlerContext): Promise<DecoratorHandlerOutput<RoleCheckDecoratorSchemas>> {
-    const headerValue = input.headers["x-my-secret-header"];
+  async handle(req: DecoratorHandlerInput<RoleCheckDecoratorSchemas>, ctx: DecoratorHandlerContext): Promise<DecoratorHandlerOutput<RoleCheckDecoratorSchemas>> {
+    const headerValue = req.headers["x-my-secret-header"];
     const role = headerValue.split('-').pop();
     if (!role) {
       return {

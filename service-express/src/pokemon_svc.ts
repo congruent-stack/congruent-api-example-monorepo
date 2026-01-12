@@ -1,36 +1,26 @@
 import { Pokemon, PokemonType, CreatePokemon } from "@congruent-stack/example-monorepo-contract";
 import { LoggerService } from "./logger_svc.js";
+import { DATA_POKEMONS } from "./pokemon_db.js";
 
 export class PokemonService {
-  private pokemons: Pokemon[] = [];
-  private nextId: number = 1;
+  private readonly logger: LoggerService;
   
-  constructor(
-    private readonly logger: LoggerService
-  ) {
-    // Initialize with some sample data
-    this.pokemons = [
-      { id: 1, name: "Bulbasaur", type: "grass", description: "A grass-type Pokémon with a seed on its back." },
-      { id: 2, name: "Charmander", type: "fire", description: "A fire-type Pokémon with a flame on its tail." },
-      { id: 3, name: "Squirtle", type: "water", description: "A water-type Pokémon with a tough shell." },
-      { id: 4, name: "Pikachu", type: "fire", description: "An electric-type Pokémon (simulated as fire)." },
-      { id: 5, name: "Ivysaur", type: "grass", description: "An evolved grass-type Pokémon." },
-    ];
-    this.nextId = 6;
+  constructor(logger: LoggerService) {
+    this.logger = logger;
   }
 
   getPokemon(id: number): Pokemon | null {
     this.logger.log(`Fetching Pokemon with ID: ${id}`);
-    const pokemon = this.pokemons.find(p => p.id === id);
+    const pokemon = DATA_POKEMONS.find(p => p.id === id);
     return pokemon || null;
   }
 
   getPokemons(take: number, skip: number, type?: PokemonType): { list: Pokemon[], total: number } {
     this.logger.log(`Fetching Pokemons - take: ${take}, skip: ${skip}, type: ${type}`);
     
-    let filtered = this.pokemons;
+    let filtered = DATA_POKEMONS;
     if (type) {
-      filtered = this.pokemons.filter(p => p.type === type);
+      filtered = DATA_POKEMONS.filter(p => p.type === type);
     }
     
     const total = filtered.length;
@@ -44,46 +34,46 @@ export class PokemonService {
     
     const newPokemon: Pokemon = {
       ...pokemon,
-      id: this.nextId++,
+      id: DATA_POKEMONS.map(p => p.id).reduce((a, b) => Math.max(a, b), 0) + 1
     };
     
-    this.pokemons.push(newPokemon);
+    DATA_POKEMONS.push(newPokemon);
     return newPokemon.id;
   }
 
   updatePokemon(id: number, pokemon: Pokemon): Pokemon | null {
     this.logger.log(`Updating Pokemon with ID: ${id}`);
     
-    const index = this.pokemons.findIndex(p => p.id === id);
+    const index = DATA_POKEMONS.findIndex(p => p.id === id);
     if (index === -1) {
       return null;
     }
     
-    this.pokemons[index] = { ...pokemon, id };
-    return this.pokemons[index];
+    DATA_POKEMONS[index] = { ...pokemon, id };
+    return DATA_POKEMONS[index];
   }
 
   patchPokemon(id: number, partialPokemon: Partial<Pokemon>): boolean {
     this.logger.log(`Patching Pokemon with ID: ${id}`);
     
-    const index = this.pokemons.findIndex(p => p.id === id);
+    const index = DATA_POKEMONS.findIndex(p => p.id === id);
     if (index === -1) {
       return false;
     }
     
-    this.pokemons[index] = { ...this.pokemons[index], ...partialPokemon, id };
+    DATA_POKEMONS[index] = { ...DATA_POKEMONS[index], ...partialPokemon, id };
     return true;
   }
 
   deletePokemon(id: number): boolean {
     this.logger.log(`Deleting Pokemon with ID: ${id}`);
     
-    const index = this.pokemons.findIndex(p => p.id === id);
+    const index = DATA_POKEMONS.findIndex(p => p.id === id);
     if (index === -1) {
       return false;
     }
     
-    this.pokemons.splice(index, 1);
+    DATA_POKEMONS.splice(index, 1);
     return true;
   }
 }

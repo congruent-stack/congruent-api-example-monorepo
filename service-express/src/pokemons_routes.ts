@@ -3,8 +3,8 @@ import { reg } from './setup.js';
 import { RoleCheckDecorator } from './role_check_decorator.js';
 
 middleware(reg, '/pokemons')
-  .inject((c) => ({
-    loggerSvc: c.getLoggerSvc()
+  .inject((scope) => ({
+    loggerSvc: scope.getLoggerSvc()
   }))
   .register({
     headers: CommonHeadersSchema,
@@ -48,6 +48,7 @@ route(reg, 'GET /pokemons')
 // Create a new pokemon
 route(reg, 'POST /pokemons')
   .decorateWith(RoleCheckDecorator, { roles: ['editor'] })
+  // .decorate((_scope, args) => new RoleCheckDecorator(args), { roles: ['admin'] }) //TODO: fix whatever this is
   .inject((scope) => ({
     pokemonSvc: scope.getPokemonSvc(),
     loggerSvc: scope.getLoggerSvc(),
